@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Readiness Assessment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>AI Readiness Checklist</h1>
+    <form id="assessment-form">
+        <div class="section">
+            <h2>Organizational Readiness</h2>
+            <label><input type="checkbox" class="question"> Leadership interest in AI?</label><br>
+            <label><input type="checkbox" class="question"> Resources allocated for AI?</label><br>
+        </div>
+        <button type="button" onclick="generateRadarMap()">Submit</button>
+    </form>
+    <canvas id="radar-chart"></canvas>
+    <div id="recommendations"></div>
+    <form id="enhancement-form" style="margin-top: 20px;">
+        <button type="button" onclick="submitToGPT()">Get Suggestions</button>
+    </form>
+    <div id="gpt-response"></div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
