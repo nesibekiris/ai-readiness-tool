@@ -1,29 +1,65 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Readiness Assessment</title>
+    <title>Comprehensive AI Readiness Checklist</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>AI Readiness Checklist</h1>
+    <h1>Comprehensive AI Readiness Assessment</h1>
+
     <form id="assessment-form">
+        <!-- Organizational Readiness -->
         <div class="section">
             <h2>Organizational Readiness</h2>
             <label><input type="checkbox" class="question"> Leadership interest in AI?</label><br>
-            <label><input type="checkbox" class="question"> Resources allocated for AI?</label><br>
+            <label><input type="checkbox" class="question"> Resources allocated for AI adoption?</label><br>
+            <label><input type="checkbox" class="question"> Internal/external stakeholder mapping?</label><br>
+            <label><input type="checkbox" class="question"> Engagement with donors/partners for AI funding?</label><br>
         </div>
-        <button type="button" onclick="generateRadarMap()">Submit</button>
+
+        <!-- Regulatory Compliance -->
+        <div class="section">
+            <h2>Regulatory Compliance</h2>
+            <label><input type="checkbox" class="question"> Compliance with GDPR, KVKK, or other regulations?</label><br>
+            <label><input type="checkbox" class="question"> Audited third-party vendor contracts?</label><br>
+            <label><input type="checkbox" class="question"> Sector-specific obligations incorporated?</label><br>
+            <label><input type="checkbox" class="question"> Policy to manage risks from generative AI?</label><br>
+        </div>
+
+        <!-- Data Governance -->
+        <div class="section">
+            <h2>Data Governance</h2>
+            <label><input type="checkbox" class="question"> Conducted audit of all collected data?</label><br>
+            <label><input type="checkbox" class="question"> Data categorized (sensitive, operational, public)?</label><br>
+            <label><input type="checkbox" class="question"> Security measures like encryption implemented?</label><br>
+            <label><input type="checkbox" class="question"> Data retention periods and deletion criteria defined?</label><br>
+            <label><input type="checkbox" class="question"> Policies reviewed and updated periodically?</label><br>
+        </div>
+
+        <!-- Ethical AI Principles -->
+        <div class="section">
+            <h2>Ethical AI Principles</h2>
+            <label><input type="checkbox" class="question"> Ethical principles defined (fairness, transparency)?</label><br>
+            <label><input type="checkbox" class="question"> Audits for discrimination/unfair outcomes?</label><br>
+            <label><input type="checkbox" class="question"> Diverse representation in AI decision-making?</label><br>
+            <label><input type="checkbox" class="question"> Established AI Ethics Committee?</label><br>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="button" onclick="generateRadarMap()">Submit Checklist</button>
     </form>
-    <canvas id="radar-chart"></canvas>
-    <div id="recommendations"></div>
-    <form id="enhancement-form" style="margin-top: 20px;">
-        <button type="button" onclick="submitToGPT()">Get Suggestions</button>
-    </form>
+
+    <!-- Radar Chart -->
+    <canvas id="radar-chart" width="400" height="400"></canvas>
+
+    <!-- Recommendations -->
+    <h3>Recommendations</h3>
+    <button type="button" onclick="submitToGPT()">Get Suggestions</button>
     <div id="gpt-response"></div>
+
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
