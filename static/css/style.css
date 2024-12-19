@@ -1,112 +1,145 @@
 /* General body styling */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #001f3f; /* Navy Blue Background */
+    background-color: #001a33; /* Darker Navy Blue */
     color: #ffffff; /* White Text for Readability */
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Header styles */
-h1 {
-    text-align: center;
-    font-size: 32px;
-    color: #f1c40f; /* Gold */
-    margin-top: 20px;
+/* Main container to hold chart and checklist */
+.main-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    width: 100%;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Radar chart container */
+.chart-container {
+    flex: 2;
+    background: #00264d; /* Slightly lighter Navy */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    background-color: #ffffff; /* White for readability */
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* Checklist container */
+.checklist-container {
+    flex: 1;
+    background: #003366; /* Darker Navy for Contrast */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
 }
 
 h2 {
+    color: #f1c40f; /* Gold */
     text-align: left;
-    font-size: 24px;
-    color: #ffffff; /* White */
-    border-bottom: 2px solid #f1c40f; /* Gold underline */
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #f1c40f;
+    padding-bottom: 5px;
 }
 
-/* Section container */
-.section {
-    margin: 20px auto;
-    padding: 20px;
-    background: #00264d; /* Slightly lighter Navy Blue */
-    border: 1px solid #f1c40f; /* Gold border */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 700px;
-}
-
-/* Input labels */
 label {
     display: block;
-    margin-bottom: 15px;
-    font-size: 18px;
-    line-height: 1.5;
+    margin: 10px 0;
+    font-size: 1rem;
     color: #ffffff;
-    cursor: pointer;
 }
 
-/* Checkboxes */
 input[type="checkbox"] {
     margin-right: 10px;
-    transform: scale(1.3); /* Slightly larger checkboxes */
-    accent-color: #f1c40f; /* Gold color for the checkbox */
+    transform: scale(1.3);
+    accent-color: #f1c40f; /* Gold */
 }
 
 /* Buttons */
 button {
-    display: block;
-    margin: 20px auto;
-    padding: 12px 24px;
-    font-size: 18px;
-    font-weight: bold;
     background-color: #f1c40f; /* Gold */
-    color: #001f3f; /* Navy Blue for contrast */
+    color: #001a33; /* Dark Navy for Contrast */
     border: none;
-    border-radius: 6px;
+    border-radius: 5px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease;
 }
 
 button:hover {
-    background-color: #ffc107; /* Slightly lighter gold */
-    transform: translateY(-2px); /* Slight hover effect */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+    background-color: #ffc107; /* Lighter Gold */
+    transform: translateY(-2px);
 }
 
-/* Radar Chart display */
-canvas {
-    display: block;
-    margin: 30px auto;
-    background-color: #ffffff; /* White for readability */
-    border-radius: 12px;
-    padding: 20px;
-    max-width: 700px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* Recommendations area */
-#gpt-response {
-    text-align: center;
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #00264d; /* Match the section background */
-    border: 1px solid #f1c40f; /* Gold border */
-    border-radius: 10px;
-    color: #ffffff; /* White text */
-    font-size: 18px;
-    line-height: 1.6;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Footer styling (if needed) */
-footer {
-    text-align: center;
-    padding: 10px 0;
-    margin-top: 20px;
-    background-color: #00264d; /* Consistent background color */
+/* Chatbox */
+.chatbox {
+    background: #003366; /* Darker Navy */
     color: #ffffff;
-    font-size: 14px;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.chatbox h3 {
+    color: #f1c40f; /* Gold */
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+textarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    border: 1px solid #f1c40f;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #001a33;
+    font-size: 1rem;
+    resize: none;
+}
+
+#chat-response {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    background: #001f3f; /* Navy Blue */
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .chart-container, .checklist-container {
+        max-width: 100%;
+        width: 90%;
+    }
 }
