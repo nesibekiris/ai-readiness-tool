@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head> 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comprehensive AI Readiness Checklist</title>
@@ -58,10 +57,14 @@
         <canvas id="radar-chart" width="600" height="600"></canvas>
     </div>
 
-    <!-- Recommendations -->
-    <h3>Recommendations</h3>
-    <button type="button" onclick="submitToGPT()">Get Suggestions</button>
-    <div id="gpt-response"></div>
+<!-- Chatbox Section -->
+<div class="chatbox">
+    <h3>AI Readiness Advisor</h3>
+    <textarea id="user-query" placeholder="Ask your question here..."></textarea>
+    <button onclick="askChatGPT()">Submit</button>
+    <div id="chat-response"></div>
+</div>
+
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
