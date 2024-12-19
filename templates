@@ -15,3 +15,6 @@ touch templates/index.html
 git add templates/index.html
 git commit -m "Add templates folder and index.html"
 git push origin main
+git rm templates/index.html
+git commit -m "Remove index.html file from templates folder"
+git push origin main
