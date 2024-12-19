@@ -5,4 +5,3 @@ gunicorn             # Optional, for production deployment
 python-dotenv        # Optional, for managing environment variables
 pytest               # Optional, for testing
 pytest-flask         # Optional, for testing Flask routes
-gunicorn -w 4 app:app
