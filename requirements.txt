@@ -1,3 +1,7 @@
-
 flask
 openai
+flask-cors           # Optional, for handling CORS
+gunicorn             # Optional, for production deployment
+python-dotenv        # Optional, for managing environment variables
+pytest               # Optional, for testing
+pytest-flask         # Optional, for testing Flask routes
