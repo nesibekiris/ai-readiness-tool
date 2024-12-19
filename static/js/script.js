@@ -4,7 +4,7 @@ function generateRadarMap() {
     const scores = {};
     const maxScores = {};
 
-    // Calculate scores for each section
+    // Collect scores from each section
     sections.forEach((section) => {
         const sectionName = section.querySelector('h2').innerText;
         const questions = section.querySelectorAll('.question');
@@ -15,13 +15,9 @@ function generateRadarMap() {
         });
 
         scores[sectionName] = score;
-        maxScores[sectionName] = questions.length; // Max score for each section
+        maxScores[sectionName] = questions.length;
     });
 
-    // Debugging: Log radar data
-    console.log("Radar data:", scores, maxScores);
-
-    // Render radar chart
     displayRadarMap(scores, maxScores);
 }
 
@@ -33,12 +29,12 @@ function displayRadarMap(scores, maxScores) {
 
     const ctx = document.getElementById('radar-chart').getContext('2d');
 
-    // Destroy existing chart instance if it exists
+    // Destroy existing chart instance if any
     if (window.myRadarChart) {
         window.myRadarChart.destroy();
     }
 
-    // Create a new radar chart instance
+    // Create a new radar chart
     window.myRadarChart = new Chart(ctx, {
         type: 'radar',
         data: {
@@ -47,117 +43,57 @@ function displayRadarMap(scores, maxScores) {
                 {
                     label: 'Your Scores',
                     data: data,
-                    backgroundColor: 'rgba(54, 162, 235, 0.3)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(241, 196, 15, 0.3)', // Gold (translucent)
+                    borderColor: '#f1c40f', // Gold
                     borderWidth: 2,
-                    pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(54, 162, 235, 1)',
+                    pointBackgroundColor: '#f1c40f',
                 },
                 {
                     label: 'Maximum Scores',
                     data: maxData,
-                    backgroundColor: 'rgba(255, 99, 132, 0.3)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.3)', // Light Blue (translucent)
+                    borderColor: '#36A2EB', // Light Blue
                     borderWidth: 2,
-                    pointBackgroundColor: 'rgba(255, 99, 132, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(255, 99, 132, 1)',
+                    pointBackgroundColor: '#36A2EB',
                 },
             ],
         },
         options: {
             responsive: true,
             plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        font: {
-                            size: 16,
-                            family: 'Arial',
-                        },
-                        color: '#FFD700',
-                    },
-                },
-                tooltip: {
-                    backgroundColor: '#FFD700', // Yellow tooltips
-                    titleFont: {
-                        size: 14,
-                        family: 'Arial',
-                    },
-                    bodyFont: {
-                        size: 12,
-                        family: 'Arial',
-                    },
-                    footerFont: {
-                        size: 12,
-                        family: 'Arial',
-                    },
-                },
+                legend: { position: 'top', labels: { color: '#fff' } },
             },
             scales: {
                 r: {
-                    angleLines: {
-                        color: '#FFD700', // Yellow angle lines
-                    },
-                    grid: {
-                        color: '#FFFFFF', // White grid
-                    },
-                    ticks: {
-                        beginAtZero: true,
-                        stepSize: 1,
-                        font: {
-                            size: 14,
-                            family: 'Arial',
-                        },
-                        color: '#FFFFFF',
-                    },
-                    pointLabels: {
-                        font: {
-                            size: 16,
-                            family: 'Arial',
-                        },
-                        color: '#FFFFFF', // White point labels
-                    },
+                    grid: { color: '#fff' },
+                    angleLines: { color: '#fff' },
+                    ticks: { color: '#fff', beginAtZero: true },
+                    pointLabels: { color: '#fff', font: { size: 14 } },
                 },
             },
         },
     });
 }
 
-// Function to submit checklist to GPT for suggestions
-async function submitToGPT() {
-    const sections = document.querySelectorAll('.section');
-    const scores = {};
-
-    sections.forEach((section) => {
-        const sectionName = section.querySelector('h2').innerText;
-        const questions = section.querySelectorAll('.question');
-        let score = 0;
-
-        questions.forEach((question) => {
-            if (question.checked) score++;
-        });
-
-        scores[sectionName] = score;
-    });
+// Chat functionality
+async function askChatGPT() {
+    const query = document.getElementById('user-query').value;
+    if (!query) {
+        alert('Please enter a question.');
+        return;
+    }
 
     try {
-        const response = await fetch('/enhance', {
+        const response = await fetch('/chat', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(scores),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: query }),
         });
 
         const result = await response.json();
-        const responseDiv = document.getElementById('gpt-response');
-        responseDiv.innerText = result.message || result.error || 'Error fetching recommendations.';
+        document.getElementById('chat-response').innerText = result.message || 'Error fetching response.';
     } catch (error) {
-        console.error('Error fetching GPT recommendations:', error);
-        document.getElementById('gpt-response').innerText = 'Error fetching recommendations. Please try again later.';
+        console.error('Error:', error);
+        document.getElementById('chat-response').innerText = 'Error fetching response. Please try again later.';
     }
 }
