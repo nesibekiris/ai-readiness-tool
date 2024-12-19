@@ -1,0 +1,85 @@
+/* General body styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #001f3f; /* Navy Blue Background */
+    color: #ffffff; /* White Text for Readability */
+    margin: 0;
+    padding: 0;
+}
+
+/* Header styles */
+h1 {
+    text-align: center;
+    color: #f1c40f; /* Gold */
+    margin-top: 20px;
+}
+
+h2 {
+    text-align: left;
+    color: #ffffff; /* White */
+    border-bottom: 2px solid #f1c40f; /* Gold underline */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Section container */
+.section {
+    margin: 20px auto;
+    padding: 20px;
+    background: #00264d; /* Slightly lighter Navy Blue */
+    border: 1px solid #f1c40f; /* Gold border for focus */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 700px;
+}
+
+/* Input labels */
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+/* Buttons */
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #f1c40f; /* Gold */
+    color: #001f3f; /* Navy Blue for contrast */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    background-color: #ffc107; /* Slightly lighter gold */
+}
+
+/* Chart display */
+canvas {
+    display: block;
+    margin: 20px auto;
+    max-width: 90%;
+    height: auto;
+    background-color: #ffffff; /* White for better visibility */
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* GPT response area */
+#gpt-response {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #00264d; /* Same as section background */
+    border: 1px solid #f1c40f; /* Gold border */
+    border-radius: 10px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #ffffff;
+}
