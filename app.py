@@ -1,49 +1,94 @@
-from flask import Flask, render_template, request, jsonify
-import openai
 import os
+from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
+import openai
+from dotenv import load_dotenv
 
-# Initialize Flask app
+# Load environment variables
+load_dotenv()
+
+# Flask app setup
 app = Flask(__name__)
+CORS(app)
 
-# Set OpenAI API Key
-openai.api_key = os.getenv("OPENAI_API_KEY") or "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"
+# Set OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-@app.route('/')
+@app.route("/")
 def index():
-    """
-    Serve the main HTML page.
-    """
-    return render_template('index.html')
+    """Render the main page."""
+    return render_template("index.html")
 
-@app.route('/enhance', methods=['POST'])
+@app.route("/enhance", methods=["POST"])
 def enhance():
-    """
-    Process the submitted checklist scores and fetch suggestions from OpenAI API.
-    """
+    """Provide detailed suggestions for AI readiness improvement."""
     try:
-        # Get scores from the request
+        # Extract data from the request
         data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        # Format scores into a readable message for the AI
+        formatted_scores = "\n".join([f"{key}: {value}" for key, value in data.items()])
+
+        # Create a prompt for actionable insights
         prompt = (
-            f"You are an AI readiness advisor. Based on the following scores: {data}, "
-            "provide actionable suggestions to improve readiness in each category."
+            f"You are an AI readiness advisor. Based on the following scores:\n"
+            f"{formatted_scores}\n\n"
+            f"Provide detailed suggestions to improve readiness in each category. "
+            f"Also, be prepared to answer any related follow-up questions from the user."
         )
 
-        # Call OpenAI API
+        # Call OpenAI API for a response
         response = openai.Completion.create(
-            engine="text-davinci-003",
+            model="text-davinci-003",
             prompt=prompt,
-            max_tokens=200,
-            temperature=0.7
+            temperature=0.7,
+            max_tokens=1000,
+            top_p=1.0,
+            frequency_penalty=0.0,
+            presence_penalty=0.0,
         )
 
-        # Extract and return the message
-        message = response.choices[0].text.strip()
-        return jsonify({'message': message})
+        suggestions = response.choices[0].text.strip()
+        return jsonify({"message": suggestions}), 200
 
     except Exception as e:
-        # Handle errors
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-if __name__ == '__main__':
-    # Run the app on the specified port (use 0.0.0.0 to make it externally accessible)
-    app.run(host='0.0.0.0', port=5000, debug=True)
+@app.route("/chat", methods=["POST"])
+def chat():
+    """Chatbox endpoint for user queries."""
+    try:
+        # Extract the user's question from the request
+        user_query = request.get_json().get("query")
+        if not user_query:
+            return jsonify({"error": "No query provided"}), 400
+
+        # Create a tailored prompt for the chat functionality
+        prompt = (
+            f"You are an AI readiness advisor. A user has asked the following question:\n\n"
+            f"{user_query}\n\n"
+            f"Provide a detailed and actionable response that aligns with best practices in AI policy readiness. "
+            f"If possible, include examples and links to relevant resources."
+        )
+
+        # Call OpenAI API to generate a response
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            temperature=0.7,
+            max_tokens=1000,
+            top_p=1.0,
+            frequency_penalty=0.0,
+            presence_penalty=0.0,
+        )
+
+        answer = response.choices[0].text.strip()
+        return jsonify({"message": answer}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+if __name__ == "__main__":
+    app.run(debug=True)
