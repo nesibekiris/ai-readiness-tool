@@ -1,36 +1,26 @@
 // Function to calculate scores and update the radar chart
 function generateRadarMap() {
-    // Select all sections
     const sections = document.querySelectorAll('.section');
     const scores = {};
     const maxScores = {};
 
     sections.forEach(section => {
-        // Get the section name
         const sectionName = section.querySelector('h2').innerText;
-
-        // Get all questions (checkboxes) in the section
         const questions = section.querySelectorAll('.question');
-
-        // Calculate the score for the section
         let score = 0;
+
         questions.forEach(question => {
             if (question.checked) score++;
         });
 
-        // Store the score and max possible score
         scores[sectionName] = score;
         maxScores[sectionName] = questions.length;
     });
 
-    // Log the scores for debugging
     console.log('Scores:', scores);
     console.log('Max Scores:', maxScores);
 
-    // Generate the radar chart
     displayRadarMap(scores, maxScores);
-
-    // Store the data for enhancement
     document.getElementById('enhancement-data').value = JSON.stringify(scores);
 }
 
@@ -42,12 +32,11 @@ function displayRadarMap(scores, maxScores) {
 
     const ctx = document.getElementById('radar-chart').getContext('2d');
 
-    // Clear existing chart if any
     if (window.radarChart) {
-        window.radarChart.destroy();
+        window.radarChart.destroy(); // Clear existing chart if any
     }
 
-    // Create a new radar chart
+    // Create the radar chart
     window.radarChart = new Chart(ctx, {
         type: 'radar',
         data: {
@@ -76,7 +65,7 @@ function displayRadarMap(scores, maxScores) {
                 legend: {
                     position: 'top',
                     labels: {
-                        color: 'white', // White text for the dark background
+                        color: 'black', // Adjust text color
                     },
                 },
             },
@@ -84,13 +73,13 @@ function displayRadarMap(scores, maxScores) {
                 r: {
                     ticks: {
                         beginAtZero: true,
-                        color: 'white', // White tick marks
+                        color: 'black', // Adjust tick color
                     },
                     angleLines: {
-                        color: 'rgba(255, 255, 255, 0.5)', // Light white angle lines
+                        color: 'rgba(0, 0, 0, 0.1)', // Adjust gridline color
                     },
                     grid: {
-                        color: 'rgba(255, 255, 255, 0.2)', // Grid lines
+                        color: 'rgba(0, 0, 0, 0.05)', // Adjust grid color
                     },
                 },
             },
