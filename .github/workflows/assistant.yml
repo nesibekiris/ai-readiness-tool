@@ -1,0 +1,9 @@
+curl -X POST http://127.0.0.1:5000/create_assistant \
+-H "Content-Type: application/json" \
+-d '{
+    "name": "Policy Advisor",
+    "model": "gpt-4o",
+    "instructions": "You provide detailed AI policy insights.",
+    "tools": [{"type": "code_interpreter"}],
+    "temperature": 0.7
+}'
