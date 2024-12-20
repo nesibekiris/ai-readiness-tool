@@ -7,3 +7,6 @@ curl -X POST http://127.0.0.1:5000/create_assistant \
     "tools": [{"type": "code_interpreter"}],
     "temperature": 0.7
 }'
+git add .github/workflows/assistant.yml
+git commit -m "Fix YAML syntax issues in workflow file"
+git push origin main
