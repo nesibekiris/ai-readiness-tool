@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import openai
 from dotenv import load_dotenv
@@ -14,85 +14,83 @@ CORS(app)
 # Set OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-@app.route("/")
-def index():
-    """Render the main page."""
-    return render_template("index.html")
-
-@app.route("/enhance", methods=["POST"])
-def enhance():
-    """Provide detailed suggestions for AI readiness improvement."""
+@app.route("/create_assistant", methods=["POST"])
+def create_assistant():
+    """Create a custom assistant with tools and instructions."""
     try:
-        # Extract data from the request
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-
-        # Format scores into a readable message for the AI
-        formatted_scores = "\n".join([f"{key}: {value}" for key, value in data.items()])
-
-        # Create a prompt for actionable insights
-        prompt = (
-            f"You are an AI readiness advisor. Based on the following scores:\n"
-            f"{formatted_scores}\n\n"
-            f"Provide detailed suggestions to improve readiness in each category. "
-            f"Also, be prepared to answer any related follow-up questions from the user."
+        data = request.json
+        response = openai.Assistant.create(
+            model=data.get("model", "gpt-4o"),
+            name=data.get("name", "Custom Assistant"),
+            instructions=data.get(
+                "instructions",
+                "You are an assistant designed to provide insights and handle requests."
+            ),
+            tools=data.get("tools", []),
+            temperature=data.get("temperature", 0.7)
         )
-
-        # Call OpenAI API for a response
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=prompt,
-            temperature=0.7,
-            max_tokens=1000,
-            top_p=1.0,
-            frequency_penalty=0.0,
-            presence_penalty=0.0,
-        )
-
-        suggestions = response.choices[0].text.strip()
-        return jsonify({"message": suggestions}), 200
-
+        return jsonify(response), 200
     except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
 
-@app.route("/chat", methods=["POST"])
-def chat():
-    """Chatbox endpoint for user queries."""
+
+@app.route("/retrieve_assistant/<assistant_id>", methods=["GET"])
+def retrieve_assistant(assistant_id):
+    """Retrieve assistant details by ID."""
     try:
-        # Extract the user's question from the request
-        user_query = request.get_json().get("query")
-        if not user_query:
+        response = openai.Assistant.retrieve(assistant_id)
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/modify_assistant/<assistant_id>", methods=["POST"])
+def modify_assistant(assistant_id):
+    """Modify an existing assistant's configuration."""
+    try:
+        data = request.json
+        response = openai.Assistant.modify(
+            assistant_id,
+            instructions=data.get("instructions"),
+            tools=data.get("tools", []),
+            temperature=data.get("temperature", 0.7)
+        )
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/delete_assistant/<assistant_id>", methods=["DELETE"])
+def delete_assistant(assistant_id):
+    """Delete an assistant by ID."""
+    try:
+        response = openai.Assistant.delete(assistant_id)
+        return jsonify({"message": "Assistant deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/chat/<assistant_id>", methods=["POST"])
+def chat_with_assistant(assistant_id):
+    """Chat with an assistant using its ID."""
+    try:
+        data = request.json
+        query = data.get("query", "")
+        if not query:
             return jsonify({"error": "No query provided"}), 400
 
-        # Create a tailored prompt for the chat functionality
-        prompt = (
-            f"You are an AI readiness advisor. A user has asked the following question:\n\n"
-            f"{user_query}\n\n"
-            f"Provide a detailed and actionable response that aligns with best practices in AI policy readiness. "
-            f"If possible, include examples and links to relevant resources."
-        )
-
-        # Call OpenAI API to generate a response
         response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=prompt,
+            model="gpt-4o",
+            prompt=f"Assistant {assistant_id} received the query: {query}",
             temperature=0.7,
-            max_tokens=1000,
-            top_p=1.0,
-            frequency_penalty=0.0,
-            presence_penalty=0.0,
+            max_tokens=150
         )
-
-        answer = response.choices[0].text.strip()
-        return jsonify({"message": answer}), 200
-
+        return jsonify({"response": response.choices[0].text.strip()}), 200
     except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
 
 
-if __name__ == '__main__':
-    # Get the port from the environment variable or default to 5000
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
-
+if __name__ == "__main__":
+    # Run the Flask app
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
