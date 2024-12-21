@@ -1,80 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprehensive AI Readiness Checklist</title>
-    <!-- Link to CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- Chart.js Library -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Readiness Checklist</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Comprehensive AI Readiness Assessment</h1>
+  <header>
+    <h1>AI Readiness Checklist</h1>
+  </header>
 
-    <div class="main-container">
-        <!-- Radar Chart Section -->
-        <div class="chart-container">
-            <h2>Radar Chart</h2>
-            <canvas id="radar-chart" width="600" height="600"></canvas>
+  <main>
+    <!-- Checklist form -->
+    <section>
+      <form id="checklistForm">
+        <h2>Organizational Strategy and Readiness</h2>
+        <div class="question">
+          <label>Do you have a clearly defined AI strategy?
+            <br>
+            <input type="radio" name="org_q1" value="Yes">Yes
+            <input type="radio" name="org_q1" value="Partial">Partial
+            <input type="radio" name="org_q1" value="No" checked>No
+          </label>
         </div>
 
-        <!-- Checklist Section -->
-        <div class="checklist-container">
-            <h2>Checklist</h2>
-            <form id="assessment-form">
-                <!-- Organizational Readiness -->
-                <div class="section">
-                    <h3>Organizational Readiness</h3>
-                    <label><input type="checkbox" class="question"> Leadership interest in AI?</label>
-                    <label><input type="checkbox" class="question"> Resources allocated for AI adoption?</label>
-                    <label><input type="checkbox" class="question"> Internal/external stakeholder mapping?</label>
-                    <label><input type="checkbox" class="question"> Engagement with donors/partners for AI funding?</label>
-                </div>
-
-                <!-- Regulatory Compliance -->
-                <div class="section">
-                    <h3>Regulatory Compliance</h3>
-                    <label><input type="checkbox" class="question"> Compliance with GDPR, KVKK, or other regulations?</label>
-                    <label><input type="checkbox" class="question"> Audited third-party vendor contracts?</label>
-                    <label><input type="checkbox" class="question"> Sector-specific obligations incorporated?</label>
-                    <label><input type="checkbox" class="question"> Policy to manage risks from generative AI?</label>
-                </div>
-
-                <!-- Data Governance -->
-                <div class="section">
-                    <h3>Data Governance</h3>
-                    <label><input type="checkbox" class="question"> Conducted audit of all collected data?</label>
-                    <label><input type="checkbox" class="question"> Data categorized (sensitive, operational, public)?</label>
-                    <label><input type="checkbox" class="question"> Security measures like encryption implemented?</label>
-                    <label><input type="checkbox" class="question"> Data retention periods and deletion criteria defined?</label>
-                    <label><input type="checkbox" class="question"> Policies reviewed and updated periodically?</label>
-                </div>
-
-                <!-- Ethical AI Principles -->
-                <div class="section">
-                    <h3>Ethical AI Principles</h3>
-                    <label><input type="checkbox" class="question"> Ethical principles defined (fairness, transparency)?</label>
-                    <label><input type="checkbox" class="question"> Audits for discrimination/unfair outcomes?</label>
-                    <label><input type="checkbox" class="question"> Diverse representation in AI decision-making?</label>
-                    <label><input type="checkbox" class="question"> Established AI Ethics Committee?</label>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="button" onclick="generateRadarMap()">Submit Checklist</button>
-            </form>
+        <div class="question">
+          <label>Do you have executive sponsorship for AI initiatives?
+            <br>
+            <input type="radio" name="org_q2" value="Yes">Yes
+            <input type="radio" name="org_q2" value="Partial">Partial
+            <input type="radio" name="org_q2" value="No" checked>No
+          </label>
         </div>
-    </div>
 
-    <!-- Chatbox Section -->
-    <div class="chatbox">
-        <h3>AI Readiness Advisor</h3>
-        <textarea id="user-query" placeholder="Ask your question here..."></textarea>
-        <button onclick="askChatGPT()">Submit</button>
-        <div id="chat-response"></div>
-    </div>
+        <h2>Data Preparedness</h2>
+        <div class="question">
+          <label>Is your data well-structured and easily accessible?
+            <br>
+            <input type="radio" name="data_q1" value="Yes">Yes
+            <input type="radio" name="data_q1" value="Partial">Partial
+            <input type="radio" name="data_q1" value="No" checked>No
+          </label>
+        </div>
 
-    <!-- Link to JavaScript -->
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <div class="question">
+          <label>Do you have sufficient historical data for AI training?
+            <br>
+            <input type="radio" name="data_q2" value="Yes">Yes
+            <input type="radio" name="data_q2" value="Partial">Partial
+            <input type="radio" name="data_q2" value="No" checked>No
+          </label>
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+
+    <!-- Results and Radar Chart -->
+    <section class="results-section">
+      <h2>Your Readiness Radar Chart</h2>
+      <canvas id="radarChart" width="400" height="400"></canvas>
+      <div id="compositeScoreContainer">
+        <h3>Overall Readiness: <span id="compositeScoreDisplay"></span></h3>
+        <p id="indicatorDisplay"></p>
+      </div>
+    </section>
+
+    <!-- Chat Box -->
+    <section class="chat-section">
+      <h2>Chat with the AI Advisor</h2>
+      <input type="text" id="chatInput" placeholder="Ask a question...">
+      <button id="chatBtn">Send</button>
+      <div id="chatResponse"></div>
+    </section>
+  </main>
+
+  <script src="/static/js/script.js"></script>
 </body>
 </html>
