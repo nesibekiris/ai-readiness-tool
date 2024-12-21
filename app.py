@@ -1,96 +1,103 @@
+from flask import Flask, render_template, request, jsonify
 import os
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import openai
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
-
-# Flask app setup
 app = Flask(__name__)
-CORS(app)
 
-# Set OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# OpenAI API key from environment
+openai.api_key = os.environ.get('OPENAI_API_KEY', '')
 
-@app.route("/create_assistant", methods=["POST"])
-def create_assistant():
-    """Create a custom assistant with tools and instructions."""
-    try:
-        data = request.json
-        response = openai.Assistant.create(
-            model=data.get("model", "gpt-4o"),
-            name=data.get("name", "Custom Assistant"),
-            instructions=data.get(
-                "instructions",
-                "You are an assistant designed to provide insights and handle requests."
-            ),
-            tools=data.get("tools", []),
-            temperature=data.get("temperature", 0.7)
-        )
-        return jsonify(response), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+@app.route('/')
+def index():
+    return render_template('index.html')
 
+@app.route('/submit', methods=['POST'])
+def submit():
+    # Define sections, their questions, and weights
+    # Add or remove sections and questions as you expand the checklist.
+    questions_by_section = {
+        "Organizational Strategy and Readiness": {
+            "questions": ["org_q1", "org_q2"],
+            "weight": 1.5,   # High priority section
+            "max_points": 2   # 2 questions, each max 1 point if "Yes"
+        },
+        "Data Preparedness": {
+            "questions": ["data_q1", "data_q2"],
+            "weight": 1.0,   # Medium priority
+            "max_points": 2
+        }
+        # Add more sections similarly...
+    }
 
-@app.route("/retrieve_assistant/<assistant_id>", methods=["GET"])
-def retrieve_assistant(assistant_id):
-    """Retrieve assistant details by ID."""
-    try:
-        response = openai.Assistant.retrieve(assistant_id)
-        return jsonify(response), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # Calculate scores
+    section_scores = {}
+    total_weight = 0
+    weighted_sum = 0
 
+    for section, data in questions_by_section.items():
+        q_list = data["questions"]
+        weight = data["weight"]
+        max_points = data["max_points"]
 
-@app.route("/modify_assistant/<assistant_id>", methods=["POST"])
-def modify_assistant(assistant_id):
-    """Modify an existing assistant's configuration."""
-    try:
-        data = request.json
-        response = openai.Assistant.modify(
-            assistant_id,
-            instructions=data.get("instructions"),
-            tools=data.get("tools", []),
-            temperature=data.get("temperature", 0.7)
-        )
-        return jsonify(response), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        section_score = 0.0
+        for q in q_list:
+            answer = request.form.get(q, "No")
+            if answer == "Yes":
+                section_score += 1
+            elif answer == "Partial":
+                section_score += 0.5
+            # No adds 0
 
+        # Normalize section score (0 to 1)
+        normalized_score = section_score / max_points
 
-@app.route("/delete_assistant/<assistant_id>", methods=["DELETE"])
-def delete_assistant(assistant_id):
-    """Delete an assistant by ID."""
-    try:
-        response = openai.Assistant.delete(assistant_id)
-        return jsonify({"message": "Assistant deleted successfully"}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        # Weighted contribution
+        weighted_contribution = normalized_score * weight
+        weighted_sum += weighted_contribution
+        total_weight += weight
 
+        # Store normalized scores in the results
+        section_scores[section] = normalized_score
 
-@app.route("/chat/<assistant_id>", methods=["POST"])
-def chat_with_assistant(assistant_id):
-    """Chat with an assistant using its ID."""
-    try:
-        data = request.json
-        query = data.get("query", "")
-        if not query:
-            return jsonify({"error": "No query provided"}), 400
+    # Compute the composite readiness score (0 to 1)
+    composite_score = weighted_sum / total_weight if total_weight > 0 else 0
+    composite_percentage = composite_score * 100
 
-        response = openai.Completion.create(
-            model="gpt-4o",
-            prompt=f"Assistant {assistant_id} received the query: {query}",
-            temperature=0.7,
-            max_tokens=150
-        )
-        return jsonify({"response": response.choices[0].text.strip()}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # Determine traffic light indicator based on composite score
+    if composite_percentage >= 80:
+        indicator = "Green"
+    elif composite_percentage >= 50:
+        indicator = "Yellow"
+    else:
+        indicator = "Red"
 
+    # Return JSON with section-wise normalized scores, composite score, and indicator
+    # We'll use normalized scores (0-1) for the radar chart.
+    return jsonify({
+        "section_scores": section_scores,
+        "composite_score": composite_percentage,
+        "indicator": indicator
+    })
 
-if __name__ == "__main__":
-    # Run the Flask app
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_message = request.form.get('message', '').strip()
+    if not openai.api_key:
+        return jsonify({"answer": "OpenAI API key not set. Please configure it on Render."})
+
+    prompt = (
+        "You are an AI consultant helping organizations improve their AI readiness. "
+        "The user has asked: " + user_message + ". Provide a concise and actionable suggestion."
+    )
+
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=150,
+        temperature=0.7
+    )
+    answer = response.choices[0].text.strip()
+    return jsonify({"answer": answer})
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
